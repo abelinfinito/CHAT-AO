@@ -6,73 +6,167 @@
   <title>Chatbot AO</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; background-color: #343541; font-family: 'Segoe UI', sans-serif; color: #fff; display: flex; height: 100vh; }
-    #sidebar { width: 250px; background-color: #202123; padding: 10px; position: fixed; height: 100vh; overflow-y: auto; left: 0; top: 0; }
-    #chat { margin-left: 260px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; background-color: #40414f; padding: 20px; }
-    #mensagens { flex-grow: 1; overflow-y: auto; padding-right: 10px; }
-    .mensagem { margin: 10px 0; padding: 12px 16px; border-radius: 10px; max-width: 80%; line-height: 1.5; }
+    body {
+      margin: 0;
+      background-color: #343541;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+    }
+
+    #sidebar {
+      width: 250px;
+      background-color: #202123;
+      padding: 10px;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      left: 0;
+      top: 0;
+      transition: transform 0.3s ease;
+    }
+
+    #chat {
+      margin-left: 250px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: #40414f;
+      padding: 20px;
+      width: calc(100% - 250px);
+      transition: margin-left 0.3s ease;
+    }
+
+    #mensagens {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .mensagem {
+      margin: 10px 0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      max-width: 80%;
+      line-height: 1.5;
+    }
+
     .user { background-color: #0e7c9f; align-self: flex-end; }
     .bot { background-color: #555; align-self: flex-start; }
-    #entrada-container { display: flex; gap: 10px; padding-top: 15px; border-top: 1px solid #555; flex-wrap: wrap; }
-    #entrada { flex-grow: 1; padding: 10px; border: none; border-radius: 5px; font-size: 16px; width: 100%; }
-    button, input[type="file"] { padding: 10px 16px; background-color: #10a37f; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+    #entrada-container {
+      display: flex;
+      gap: 10px;
+      padding-top: 15px;
+      border-top: 1px solid #555;
+      flex-wrap: wrap;
+    }
+
+    #entrada {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    button, input[type="file"] {
+      padding: 10px 16px;
+      background-color: #10a37f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
     button:hover { background-color: #0f8b6e; }
+
     .active { font-weight: bold; color: #10a37f; }
-    .edit-btn, .delete-btn { margin-left: 10px; cursor: pointer; color: #ff6666; font-size: 14px; }
+
+    .edit-btn, .delete-btn {
+      margin-left: 10px;
+      cursor: pointer;
+      color: #ff6666;
+      font-size: 14px;
+    }
+
     .edit-btn:hover { color: #ffaaaa; }
     .delete-btn:hover { color: #ff3333; }
+
     #imagem-upload { display: none; }
-@media screen and (max-width: 768px) {
-  #sidebar {
-    width: 25%;
-    height: 40vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    overflow-y: auto;
-    background-color: #303130ee;
-    font-size:10px;
-    bottom: unset;
-  }
 
-  #chat {
-    margin-left: 25%;
-    width: 50%;
-    
-  }
+    /* Botão hamburguer */
+    #toggleSidebar {
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background-color: #10a37f;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 5px;
+      z-index: 999;
+      font-size: 18px;
+      cursor: pointer;
+    }
 
-  #entrada-container {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 10px;
-  }
+    @media screen and (max-width: 768px) {
+      #sidebar {
+        transform: translateX(-100%);
+        z-index: 998;
+        width: 70%;
+      }
 
-  #mensagens {
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
+      #sidebar.mostrar {
+        transform: translateX(0);
+      }
 
-  .mensagem {
-    max-width: 95%;
-    font-size: 14px;
-    margin-bottom: 10px;
-    word-break: break-word;
-  }
+      #chat {
+        margin-left: 0;
+        width: 100%;
+        padding: 70px 10px 20px;
+      }
 
-  .mensagem img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
-}
+      #toggleSidebar {
+        display: block;
+      }
 
-  
-    
+      #mensagens {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 5px;
+      }
+
+      .mensagem {
+        max-width: 95%;
+        font-size: 14px;
+        margin-bottom: 10px;
+        word-break: break-word;
+      }
+
+      .mensagem img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
+
+      #entrada-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
+  <button id="toggleSidebar" onclick="alternarSidebar()">☰</button>
+
   <div id="sidebar">
     <h2>Conversas</h2>
     <button onclick="novaConversa()">Nova conversa</button>
@@ -131,7 +225,7 @@
       const texto = input.value.trim();
       if (texto === "") return;
 
-      input.value = ""; // Limpa o campo imediatamente
+      input.value = "";
 
       const mensagens = document.getElementById("mensagens");
       mensagens.innerHTML += `<div class="mensagem user">${texto}</div>`;
@@ -145,7 +239,7 @@
     }
 
     async function chamarOpenAI(texto) {
-      const apiKey = "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"; 
+      const apiKey = "SUA_CHAVE_AQUI"; // Troque pela sua chave
       const url = "https://api.openai.com/v1/chat/completions";
 
       const historico = conversas[conversaAtual].mensagens.flatMap(m => [
@@ -178,12 +272,10 @@
         leitor.onload = function(e) {
           const mensagens = document.getElementById("mensagens");
           mensagens.innerHTML += `<div class="mensagem user"><img src="${e.target.result}" alt="Imagem enviada" style="max-width: 200px; border-radius: 8px;"></div>`;
-
           conversas[conversaAtual].mensagens.push({
             user: "[Imagem enviada]",
             bot: "(O envio de imagens ainda não é suportado como entrada para resposta)"
           });
-
           mensagens.innerHTML += `<div class="mensagem bot">(Ainda não consigo responder a imagens, mas estou aqui para texto!)</div>`;
           salvarConversas();
           atualizarListaConversas();
@@ -216,6 +308,11 @@
       });
       salvarConversas();
       atualizarListaConversas();
+    }
+
+    function alternarSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("mostrar");
     }
 
     atualizarListaConversas();
