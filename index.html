@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chatbot Estilo Copilot</title>
+  <title>Chatbot AO</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background-color: #343541; font-family: 'Segoe UI', sans-serif; color: #fff; display: flex; height: 100vh; }
-    #sidebar { width: 250px; background-color: #202123; padding: 15px; position: fixed; height: 100vh; overflow-y: auto; left: 0; top: 0; }
+    #sidebar { width: 250px; background-color: #202123; padding: 10px; position: fixed; height: 100vh; overflow-y: auto; left: 0; top: 0; }
     #chat { margin-left: 260px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; background-color: #40414f; padding: 20px; }
     #mensagens { flex-grow: 1; overflow-y: auto; padding-right: 10px; }
     .mensagem { margin: 10px 0; padding: 12px 16px; border-radius: 10px; max-width: 80%; line-height: 1.5; }
@@ -22,15 +22,54 @@
     .edit-btn:hover { color: #ffaaaa; }
     .delete-btn:hover { color: #ff3333; }
     #imagem-upload { display: none; }
+@media screen and (max-width: 768px) {
+  #sidebar {
+    width: 25%;
+    height: 40vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    background-color: #303130ee;
+    font-size:10px;
+    bottom: unset;
+  }
+
+  #chat {
+    margin-left: 25%;
+    width: 50%;
     
-    @media screen and (max-width: 768px) {
-      #sidebar { width: 250px; height: 100vh; position: fixed; left: 0; top: 0; overflow-y: auto; }
-      #chat { margin-left: 260px; width: calc(100% - 260px); }
-      #entrada-container { flex-direction: column; align-items: center; }
-      #mensagens { max-height: 70vh; overflow-y: auto; padding-right: 5px; }
-      .mensagem { max-width: 90%; font-size: 14px; }
-      .mensagem img { max-width: 100%; height: auto; }
-    }
+  }
+
+  #entrada-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+  }
+
+  #mensagens {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
+  }
+
+  .mensagem {
+    max-width: 95%;
+    font-size: 14px;
+    margin-bottom: 10px;
+    word-break: break-word;
+  }
+
+  .mensagem img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+  
+    
   </style>
 </head>
 <body>
@@ -39,7 +78,7 @@
     <button onclick="novaConversa()">Nova conversa</button>
     <ul id="listaConversas"></ul>
   </div>
-  
+
   <div id="chat">
     <div id="mensagens"></div>
     <div id="entrada-container">
@@ -92,20 +131,21 @@
       const texto = input.value.trim();
       if (texto === "") return;
 
+      input.value = ""; // Limpa o campo imediatamente
+
       const mensagens = document.getElementById("mensagens");
       mensagens.innerHTML += `<div class="mensagem user">${texto}</div>`;
-  input.value = "";
+
       const resposta = await chamarOpenAI(texto);
       mensagens.innerHTML += `<div class="mensagem bot">${resposta}</div>`;
 
       conversas[conversaAtual].mensagens.push({ user: texto, bot: resposta });
       salvarConversas();
       atualizarListaConversas();
-    
     }
 
     async function chamarOpenAI(texto) {
-      const apiKey = "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"; 
+      const apiKey = "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"; 
       const url = "https://api.openai.com/v1/chat/completions";
 
       const historico = conversas[conversaAtual].mensagens.flatMap(m => [
@@ -127,6 +167,29 @@
 
       const dados = await resposta.json();
       return dados.choices[0].message.content;
+    }
+
+    function enviarImagem() {
+      const inputImagem = document.getElementById("imagem-upload");
+      const ficheiro = inputImagem.files[0];
+
+      if (ficheiro) {
+        const leitor = new FileReader();
+        leitor.onload = function(e) {
+          const mensagens = document.getElementById("mensagens");
+          mensagens.innerHTML += `<div class="mensagem user"><img src="${e.target.result}" alt="Imagem enviada" style="max-width: 200px; border-radius: 8px;"></div>`;
+
+          conversas[conversaAtual].mensagens.push({
+            user: "[Imagem enviada]",
+            bot: "(O envio de imagens ainda não é suportado como entrada para resposta)"
+          });
+
+          mensagens.innerHTML += `<div class="mensagem bot">(Ainda não consigo responder a imagens, mas estou aqui para texto!)</div>`;
+          salvarConversas();
+          atualizarListaConversas();
+        };
+        leitor.readAsDataURL(ficheiro);
+      }
     }
 
     function atualizarListaConversas() {
