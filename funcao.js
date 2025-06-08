@@ -52,31 +52,37 @@
       salvarConversas();
       atualizarListaConversas();
     }
+async function chamarOpenAI(texto) {
+  const apiKey = "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";
+  const url = "https://api.openai.com/v1/chat/completions";
 
-    async function chamarOpenAI(texto) {
-      const apiKey = "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"; // Troque pela sua chave
-      const url = "https://api.openai.com/v1/chat/completions";
+  const contextoNegocio = {
+    role: "system",
+    content: "Tu és um assistente virtual da empresa AGT que esta localizado em Angola responde tudo sobre esta empres SEU NOME E JESSICA "
+  };
 
-      const historico = conversas[conversaAtual].mensagens.flatMap(m => [
-        { role: "user", content: m.user },
-        { role: "assistant", content: m.bot }
-      ]).concat({ role: "user", content: texto });
+  const historico = conversas[conversaAtual].mensagens.flatMap(m => [
+    { role: "user", content: m.user },
+    { role: "assistant", content: m.bot }
+  ]);
 
-      const resposta = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: historico
-        })
-      });
+  const mensagens = [contextoNegocio, ...historico, { role: "user", content: texto }];
 
-      const dados = await resposta.json();
-      return dados.choices[0].message.content;
-    }
+  const resposta = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: mensagens
+    })
+  });
+
+  const dados = await resposta.json();
+  return dados.choices[0].message.content;
+}
 
     function enviarImagem() {
       const inputImagem = document.getElementById("imagem-upload");
