@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chatbot AO</title>
+<link rel="stylesheet" href="estilo.css">
+<script src="funcao.js"></script>
+
+
+
+</head>
+<body>
+  <button id="toggleSidebar" onclick="alternarSidebar()">☰</button>
+ 
+
+
+  <div id="sidebar">
+    <img src="abel.png" alt="descrição da imagem">
+
+    <h2>Conversas</h2>
+    <button onclick="novaConversa()">Nova conversa</button>
+    <ul id="listaConversas"></ul>
+  </div>
+
+  <div id="chat">
+    
+    <div id="mensagens"></div>
+    <div id="entrada-container">
+      <input type="text" id="entrada" placeholder="Escreva aqui..." />
+      <button onclick="enviarMensagem()">Enviar</button>
+      <button onclick="document.getElementById('imagem-upload').click()">📷 Enviar Imagem</button>
+      <input type="file" id="imagem-upload" accept="image/*" onchange="enviarImagem()">
+    </div>
+  </div>
+
+ 
+</body>
+</html>
