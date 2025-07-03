@@ -70,7 +70,7 @@ async function chamarOpenAI(texto) {
 
   const mensagens = [contextoNegocio, ...historico, { role: "user", content: texto }];
 
-  const resposta = await fetch("https://chatbot-ao.onrender.com/api/perguntar", {
+  const resposta = await fetch("https://chat-ao.onrender.com/api/perguntar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ mensagens })
